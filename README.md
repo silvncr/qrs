@@ -37,19 +37,19 @@ We'll input our letters and press <kbd>Enter</kbd>.
         --- query: delmnotw (8 letters) ---
 
         8 letters - 18 points
-         meltdown
+         MELTDOWN
 
         5 letters - 14 points
-         mowed
+         MOWED
 
         4 letters - 12 points
-         mewl
+         MEWL
 
         3 letters - 10 points
-         mew, mow, wem
+         MEW, MOW, WEM
 
         2 letters - 6 points
-         ew, ow, we, wo
+         EW, OW, WE, WO
 
 > _
 ```
