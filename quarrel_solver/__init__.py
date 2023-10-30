@@ -9,8 +9,8 @@ def build_letter_scores(
 	Returns the letter scores for the given name. To be passsed into the `Ruleset` class.
 
 	Args:
-		`name: Optional[str]`: The name of the letter scoring system. Defaults to *Quarrel*, and defaults back if invalid.
-	
+		`name: Optional[str]`: The name of the letter scoring system. Defaults to *Quarrel*, and returns an empty dictionary if invalid.
+
 	Returns:
 		A dictionary of letter scores, with letters as keys and scores as values.
 	'''
@@ -53,12 +53,15 @@ def build_settings(
 
 	if not user_settings:
 		user_settings = {}
+
 	if not wordlist:
 		wordlist = wordlist_full
+
 	if 'exclude_words' in user_settings:
 		for word in user_settings['exclude_words']:
 			if (word) and (word in wordlist):
 				wordlist.remove(word)
+
 	if 'include_words' in user_settings:
 		for word in user_settings['include_words']:
 			if (word) and (word not in wordlist):
@@ -75,6 +78,7 @@ def build_settings(
 		'max_words_len': max(len(word) for word in wordlist),
 		'min_words_len': 2,
 	} | user_settings
+
 	settings |= {
 		'max_words_len': min(
 			settings['max_words_len'], max(len(word) for word in wordlist)
@@ -83,6 +87,7 @@ def build_settings(
 			settings['min_words_len'], 2
 		),
 	}
+
 	settings |= {
 		'letter_scores': settings['letter_scores']
 			if build_letter_scores(settings['letter_scores'])
@@ -94,44 +99,54 @@ def build_settings(
 class Ruleset:
 	def __init__(
 		self,
-		wordlist: typing.Optional[list[str]] = None,
 		settings: typing.Optional[typing.Dict[str, typing.Any]] = None,
+		wordlist: typing.Optional[list[str]] = None,
 	) -> None:
 		'''
 		Defines a word game ruleset with the given settings and wordlist.
 
 		Args:
-			`wordlist: Optional[list[str]]`: A list of words to be used in the ruleset. Defaults to the full Scrabble wordlist.
 			`settings: Optional[dict[str, Any]]`: Custom settings to override the default settings. Defaults to an empty dictionary. Should be an output from `build_settings()`.
+			`wordlist: Optional[list[str]]`: A list of words to be used in the ruleset. Defaults to the full Scrabble wordlist.
+
+		Returns:
+			A `Ruleset` with the specified settings and wordlist.
 		'''
 
 		if settings is None:
 			settings = {}
+
 		if not wordlist:
 			wordlist = wordlist_full
+
 		if 'exclude_words' in settings:
 			for word in settings['exclude_words']:
 				if (word) and (word in wordlist):
 					wordlist.remove(word)
+
 		if 'include_words' in settings:
 			for word in settings['include_words']:
 				if (word) and (word not in wordlist):
 					wordlist.append(word)
+
 		settings = build_settings(settings, wordlist)
+
 		try:
 			with open(settings['custom_dictionary'], 'r') as f:
 				wordlist = f.read().splitlines()
 		except (FileNotFoundError, KeyError):
 			wordlist = wordlist_full
+
 		wordlist = [
 			word for word in wordlist if settings['min_words_len'] <= len(word) <= settings['max_words_len']
 		]
+
 		self.settings = settings
 		self.scores = {
-			word: sum(build_letter_scores(self.settings['letter_scores'])[char] for char in word) for word in sorted(
+			word: sum(build_letter_scores(self['letter_scores'])[char] for char in word) for word in sorted(
 				sorted(wordlist),
 				key=lambda word: (
-					len(word), sum(build_letter_scores(self.settings['letter_scores'])[char] for char in word)
+					len(word), sum(build_letter_scores(self['letter_scores'])[char] for char in word)
 				), reverse=True
 			)
 		}
@@ -143,7 +158,7 @@ class Ruleset:
 
 		Args:
 			`key: str`: The setting to get the value of.
-		
+
 		Returns:
 			The value of the given setting.
 		'''
@@ -161,7 +176,7 @@ class Ruleset:
 		'''
 
 		return self.settings
-	
+
 	def get_settings_str(
 		self,
 	) -> str:
@@ -177,36 +192,35 @@ class Ruleset:
 	) -> tuple[dict[int, list[typing.Union[list[str], str]]], bool]:
 		'''
 		Finds all possible words that can be formed from the given query string, using the set wordlist.
+
 		Args:
 			`query: str`: A string representing the query to be solved.
+
 		Returns:
 			A tuple containing a dictionary of best words by length, and a boolean indicating whether an anagram was found.
 		'''
 
 		scores_out = {}
 
-		if self.settings['display_debug']:
+		if self['display_debug']:
 			print('')
 
 		for len_iter in range(
-			2, max(
-				len(word) for word in self.wordlist
-			) if self.settings['allow_repeats'] else len(query) + 1
+			2, self['max_word_len'] if self['allow_repeats'] else len(query) + 1
 		)[::-1]:
 			scores_out |= {len_iter: [[], 0]}
+
 			for word in self.scores:
 				query_iter, word_iter = copy.deepcopy(query), copy.deepcopy(word)
 				word_fits = False
 
 				if (
-					len(word) == len_iter
-					if self.settings['ignore_scores']
-					else len(word) <= len_iter
+					len(word) == len_iter if self['ignore_scores'] else len(word) <= len_iter
 				) and set(word) <= set(query):
-					if not self.settings['ignore_scores'] and self.scores[word] < scores_out[len_iter][1]:
+					if not self['ignore_scores'] and self.scores[word] < scores_out[len_iter][1]:
 						continue
 
-					if self.settings['allow_repeats']:
+					if self['allow_repeats']:
 						word_fits = all(char in query for char in word)
 
 					else:
@@ -214,21 +228,22 @@ class Ruleset:
 							query_iter = query_iter.replace(char, ' ', 1)
 							word_iter = word_iter.replace(char, ' ', 1)
 
-							if self.settings['display_debug']:
+							if self['display_debug']:
 								print(f'input: {[query_iter]} | {[word]}: {[word_iter]}')
 
 						if query_iter.count(' ') == word_iter.count(' ') != 0:
 							word_fits = True
 
-					if self.settings['display_debug']:
+					if self['display_debug']:
 						print(f'{[word]} fits for {[len_iter]}')
 
 				if word_fits:
 					scores_out[len_iter][0].append(word)
-					if not self.settings['ignore_scores']:
+
+					if not self['ignore_scores']:
 						scores_out[len_iter][1] = self.scores[scores_out[len_iter][0][0]]
 
-			if self.settings['display_debug']:
+			if self['display_debug']:
 				print(f' - output for {[len_iter]}: {scores_out[len_iter][0]}')
 
 		try:
@@ -240,13 +255,13 @@ class Ruleset:
 			with contextlib.suppress(IndexError, KeyError):
 				if not val:
 					del scores_out[key]
-					if self.settings['display_debug']:
+					if self['display_debug']:
 						print(f' - removed {[key]} for empty list')
-				elif not self.settings['ignore_scores'] and any(
+				elif not self['ignore_scores'] and any(
 					word in scores_out[key][0] for word in scores_out[key-1][0]
 				):
 					del scores_out[key]
-					if self.settings['display_debug']:
+					if self['display_debug']:
 						print(f' - removed {[key]} for duplicate/s')
 
 		return scores_out, anagram_found
@@ -271,17 +286,17 @@ class Ruleset:
 
 		return str(
 			f'  \t--- query: {query} ({len(query)} letters'
-			+ (' + repeats' if self.settings['allow_repeats'] else '') + ') ---\n\n' + (
+			+ (' + repeats' if self['allow_repeats'] else '') + ') ---\n\n' + (
 				(
 					anagram_found + '\n\n'.join(
 						f'\t{key} letters'
 						+ (
 							''
-							if self.settings['ignore_scores']
+							if self['ignore_scores']
 							else f' - {scores_out[key][1]} points'
 						) + '\n\t ' + ', '.join(
 							sorted(
-								word if self.settings['all_lowercase'] else word.upper()
+								word if self['all_lowercase'] else word.upper()
 								for word in scores_out[key][0]
 							)
 						)
