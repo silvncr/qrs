@@ -1,4 +1,3 @@
-
 > Works on Python 3.12.0 and above. Tested on Windows 10.
 
 ## Summary
@@ -16,9 +15,13 @@ $ py
 
 ```py
 >>> from quarrel_solver import Ruleset
->>> quarrel = Ruleset()  # defaults to Quarrel rules
+>>> q = Ruleset(
+...     settings = {
+...         'max_words_len': 8
+...     }
+... )
 >>> print(
-...     quarrel.solve_str('wetodlnm')
+...     q.solve_str('wetodlnm')
 ... )
 ```
 
@@ -107,5 +110,5 @@ When running directly:
 
 This project makes use of the following resources:
 
-- [The `scrabble` library](https://github.com/benjamincrom/scrabble)'s word list, adapted from *Collins Scrabble Words (2019)* (source: [*StackExchange*](https://boardgames.stackexchange.com/a/38386))
+- [The `scrabble` library](https://github.com/benjamincrom/scrabble)'s wordlist, adapted from *Collins Scrabble Words (2019)* (source: [*StackExchange*](https://boardgames.stackexchange.com/a/38386))
 - *Quarrel*'s letter scoring system, taken directly from in-game (source: [*Wikipedia*](https://en.wikipedia.org/wiki/Quarrel_(video_game)#Scoring))
