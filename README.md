@@ -29,9 +29,13 @@ See the example case below to find out what this displays.
 
 ## Direct execution
 
-If you run `quarrel_solver/__init__.py` directly, you'll be greeted with a command-line version of the program. Its input screen looks like this:
-
+```sh
+$ py -m quarrel_solver
 ```
+
+If you call the library directly, you'll be greeted with a commandline program. Its input screen looks like this:
+
+```py
 > _
 ```
 
@@ -53,7 +57,7 @@ Here's an example using the default program settings. Our situation is the follo
 
 We'll input our letters and press <kbd>Enter</kbd>.
 
-```
+```py
 > wetodlnm
 
         --- query: delmnotw (8 letters) ---
@@ -76,7 +80,7 @@ We'll input our letters and press <kbd>Enter</kbd>.
 > _
 ```
 
-Obviously, we can't make the anagram `MELTDOWN` because we can only use 7 letters. In this case, our best word is `MOWED` (14 points). Based on this output, we also know that unless our opponent has 8 spaces, they cannot score higher than 14 points.
+We can't make the anagram `MELTDOWN` because we can only use 7 letters. In this case, our best word is `MOWED` (14 points). Based on this output, we also know that unless our opponent has 8 spaces, they cannot score higher than 14 points.
 
 Note that a word like `LETDOWN` (7 letters) scores the same number of points as `MOWED`. However, `LETDOWN` isn't recognised as a "best word" in this example case. This is because when words are tied for points, the program will choose the word/s with the fewest letters.
 
@@ -84,7 +88,7 @@ The fewer letters your word has, the faster you can write it into your game. Thi
 
 ### Settings
 
-Upon being run directly, the program will automatically generate a `settings.json` file in the root directory. This file contains the program's settings, which can be changed to suit your needs.
+Upon being run directly, the program will automatically generate (or look for) a `settings.json` file in the directory which the command is run from. This file contains the program's settings, which can be changed to suit your needs.
 
 When using `quarrel-solver`, you should can pass a `dict` with any of the following keys into `build_settings` to generate a full settings object, then pass the output to a `Ruleset` to create a new instance. Here are all the currently supported settings:
 
@@ -97,7 +101,7 @@ When using `quarrel-solver`, you should can pass a `dict` with any of the follow
 | `ignore_scores` | `false` | Determines whether point values for words are considered, in which case only the highest-scoring words are displayed. If you don't care about scoring, turn this off to see all words. |
 | `include_words` | `[]` | List of additional words for the wordlist. |
 | `letter_scores` | `"quarrel"` | Determines the letter scoring system used for calculating points. The value here is passed into `build_letter_scores()`, and defaults back if invalid. |
-| `max_words_length` | longest length found in [`scrabble`](https://github.com/benjamincrom/scrabble)'s wordlist | Determines the maximum word length the program will calculate for. |
+| `max_words_length` | longest length in wordlist | Determines the maximum word length the program will calculate for. |
 | `min_words_length` | `2` | Determines the minimum word length the program will calculate for. |
 
 When running directly:
