@@ -14,11 +14,11 @@ $ py
 ```
 
 ```py
->>> from quarrel_solver import Ruleset
+>>> from quarrel_solver import build_settings, Ruleset
 >>> q = Ruleset(
-...     settings = {
-...         'max_words_len': 8
-...     }
+...     settings=build_settings(
+...         {'max_words_len': 8}
+...     )
 ... )
 >>> print(
 ...     q.solve_str('wetodlnm')
@@ -101,8 +101,8 @@ When using `quarrel-solver`, you should can pass a `dict` with any of the follow
 | `ignore_scores` | `false` | Determines whether point values for words are considered, in which case only the highest-scoring words are displayed. If you don't care about scoring, turn this off to see all words. |
 | `include_words` | `[]` | List of additional words for the wordlist. |
 | `letter_scores` | `"quarrel"` | Determines the letter scoring system used for calculating points. The value here is passed into `build_letter_scores()`, and defaults back if invalid. |
-| `max_words_length` | longest length in wordlist | Determines the maximum word length the program will calculate for. |
-| `min_words_length` | `2` | Determines the minimum word length the program will calculate for. |
+| `max_words_len` | longest length in wordlist | Determines the maximum word length the program will calculate for. |
+| `min_words_len` | `2` | Determines the minimum word length the program will calculate for. |
 
 When running directly:
 
