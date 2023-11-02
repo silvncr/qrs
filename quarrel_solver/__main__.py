@@ -1,9 +1,11 @@
 import contextlib, json, os, string, sys
-from quarrel_solver import build_settings, Ruleset
+try:
+	from __init__ import build_settings, Ruleset
+except ImportError:
+	from quarrel_solver import build_settings, Ruleset
 
 with contextlib.suppress(KeyboardInterrupt):
-
-	print('\n\tloading settings, wordlist..')
+	print('\n\tloading settings and wordlist..')
 
 	try:
 		with open(
@@ -16,14 +18,14 @@ with contextlib.suppress(KeyboardInterrupt):
 	except FileNotFoundError:
 		settings_import = {}
 
-		print('\n\tcould not load settings.json! continuing with default settings..')
+		print('\tcould not load \'settings.json\'; continuing with default settings..')
 
 	q = Ruleset(
 		settings=build_settings(settings_import)
 	)
 
 	if q['display_debug']:
-		print(f'\n{q.get_settings()}\n')
+		print(f'\n{q.get_settings_str().rstrip()}')
 
 	try:
 		open(
@@ -35,7 +37,7 @@ with contextlib.suppress(KeyboardInterrupt):
 		)
 
 	except Exception:
-		print('\n\tcould not save settings.json! continuing..')
+		print('\n\tcould not save \'settings.json\'; continuing without saving..')
 
 	print('\n\t\tdone!')
 
@@ -46,12 +48,10 @@ with contextlib.suppress(KeyboardInterrupt):
 			q['min_words_len'] <= len(query) <= q['max_words_len'],
 			all(char not in string.ascii_lowercase for char in query)
 		]):
-			print(f'\n{
-				q.solve_str(
-					''.join(
-						sorted(dict.fromkeys(input('> ').lower()))
-						if q['allow_repeats']
-						else sorted(input('> ').lower())
-					)
+			print('\n' + q.solve_str(
+				''.join(
+					sorted(dict.fromkeys(input('> ').lower()))
+					if q['allow_repeats']
+					else sorted(input('> ').lower())
 				)
-			}\n')
+			) + '\n')

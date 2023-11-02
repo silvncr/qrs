@@ -1,12 +1,16 @@
-> Works on Python 3.12.0 and above. Tested on Windows 10.
+> Works on Python 3.8 and above. Tested on Windows 10.
 
 ## Summary
 
 Tool for *Quarrel* by *Denki Games* (released on *iOS* in 2011 and *Xbox Live Arcade* in 2012).
 
+Provides word game-related tools, and can be configured with custom settings, letter scores, and wordlists.
+
 ## How to use (with `quarrel-solver`)
 
 Install the `quarrel-solver` library to use all functionality in your own projects.
+
+> Remember to always use the latest version, as not all bugfixes are documented!
 
 ```sh
 $ py -m pip install --upgrade quarrel-solver
@@ -42,7 +46,7 @@ If you call the library directly, you'll be greeted with a commandline program. 
 Type your letters into the field, press <kbd>Enter</kbd>, and wait for the program to calculate the best words. Once it's done, choose one from the list that corresponds with the number of letters you have available, or the next lowest. See the example below to find out why you might not need to use all of your spaces.
 
 > Please note that if you plan to use the program without the library, you'll need to install its dependencies manually first.
-> 
+>
 > ```sh
 > $ py -m pip install -r requirements.txt
 > ```
@@ -72,10 +76,10 @@ We'll input our letters and press <kbd>Enter</kbd>.
          MEWL
 
         3 letters - 10 points
-         MEW, MOW, WEM
+         MEW, MOW
 
         2 letters - 6 points
-         EW, OW, WE, WO
+         OW, WE, WO
 
 > _
 ```

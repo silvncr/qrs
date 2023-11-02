@@ -1,4 +1,4 @@
-version = '1.3'
+version = '1.4'
 
 from setuptools import setup
 
@@ -15,7 +15,7 @@ setup(
 	packages=['quarrel_solver'],
 	install_requires=['scrabble==1.3'],
 	setup_requires=['pytest_runner'],
-	python_requires='>=3.12',
+	python_requires='>=3.8',
 	scripts=[],
 	tests_require=['pytest'],
 	entry_points={},

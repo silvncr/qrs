@@ -1,3 +1,7 @@
+'''
+Provides word game-related tools, and can be configured with custom settings, letter scores, and wordlists.
+'''
+
 import contextlib, copy, json, scrabble, typing
 
 wordlist_full = list(copy.deepcopy(scrabble.scrabble.config.ENGLISH_DICTIONARY_SET))
@@ -38,8 +42,8 @@ def build_letter_scores(
 	)
 
 def build_settings(
-	user_settings: typing.Optional[dict[str, typing.Any]] = None,
-	wordlist: typing.Optional[list[str]] = None,
+	user_settings: typing.Optional[typing.Dict[str, typing.Any]] = None,
+	wordlist: typing.Optional[typing.List[str]] = None,
 ):
 	'''
 	Returns the settings for the given user settings. To be passsed into the `Ruleset` class.
@@ -68,30 +72,36 @@ def build_settings(
 				wordlist.append(word)
 
 	settings = {
-		'all_lowercase': False,
-		'allow_repeats': False,
-		'display_debug': False,
-		'exclude_words': [],
-		'ignore_scores': False,
-		'include_words': [],
-		'letter_scores': '',
-		'max_words_len': max(len(word) for word in wordlist),
-		'min_words_len': 2,
-	} | user_settings
-
-	settings |= {
-		'max_words_len': min(
-			settings['max_words_len'], max(len(word) for word in wordlist)
-		),
-		'min_words_len': max(
-			settings['min_words_len'], 2
-		),
+		**{
+			'all_lowercase': False,
+			'allow_repeats': False,
+			'display_debug': False,
+			'exclude_words': [],
+			'ignore_scores': False,
+			'include_words': [],
+			'letter_scores': 'quarrel',
+			'max_words_len': max(len(word) for word in wordlist),
+			'min_words_len': 2,
+		}, **user_settings
 	}
 
-	settings |= {
-		'letter_scores': settings['letter_scores']
-			if build_letter_scores(settings['letter_scores'])
-			else 'quarrel'
+	settings = {
+		**settings, **{
+			'max_words_len': min(
+				settings['max_words_len'], max(len(word) for word in wordlist)
+			),
+			'min_words_len': max(
+				settings['min_words_len'], 2
+			),
+		}
+	}
+
+	settings = {
+		**settings, **{
+			'letter_scores': settings['letter_scores']
+				if build_letter_scores(settings['letter_scores'])
+				else 'quarrel'
+		}
 	}
 
 	return settings
@@ -100,7 +110,7 @@ class Ruleset:
 	def __init__(
 		self,
 		settings: typing.Optional[typing.Dict[str, typing.Any]] = None,
-		wordlist: typing.Optional[list[str]] = None,
+		wordlist: typing.Optional[typing.List[str]] = None,
 	) -> None:
 		'''
 		Defines a word game ruleset with the given settings and wordlist.
@@ -189,7 +199,7 @@ class Ruleset:
 	def solve(
 		self,
 		query: str,
-	) -> tuple[dict[int, list[typing.Union[list[str], str]]], bool]:
+	) -> typing.Tuple[typing.Dict[int, typing.List[typing.Union[typing.List[str], str]]], bool]:
 		'''
 		Finds all possible words that can be formed from the given query string, using the set wordlist.
 
@@ -206,9 +216,13 @@ class Ruleset:
 			print('')
 
 		for len_iter in range(
-			2, self['max_word_len'] if self['allow_repeats'] else len(query) + 1
+			2, (self['max_words_len'] if self['allow_repeats'] else len(query)) + 1
 		)[::-1]:
-			scores_out |= {len_iter: [[], 0]}
+			scores_out = {
+				**scores_out, **{
+					len_iter: [[], 0]
+				}
+			}
 
 			for word in self.scores:
 				query_iter, word_iter = copy.deepcopy(query), copy.deepcopy(word)
@@ -311,9 +325,9 @@ class Ruleset:
 
 	def get_wordlist(
 		self,
-	) -> list[str]:
+	) -> typing.List[str]:
 		'''
-		Returns the current wordlist, as defined in the ruleset's settings.
+		Returns the current wordlist, as defined in the ruleset settings.
 		'''
 
 		return self.wordlist
