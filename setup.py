@@ -1,4 +1,4 @@
-version = '1.4'
+version = '1.5'
 
 from setuptools import setup
 
@@ -23,7 +23,6 @@ setup(
 	classifiers=[
 		'Programming Language :: Python',
 		'Programming Language :: Python :: 3',
-		'Programming Language :: Python :: 3.12',
 		'Topic :: Games/Entertainment :: Board Games',
 		'Topic :: Games/Entertainment :: Puzzle Games',
 		'Topic :: Software Development :: Libraries',

@@ -1,12 +1,40 @@
+
+---
+
+<div align="center">
+<h1>
+
+```sh
+pip install quarrel-solver
+```
+</h1>
+
+### Tool for *Quarrel* (and other word games)
+
+![[publish status](https://github.com/silvncr/quarrel/actions/workflows/python-publish.yml)](https://github.com/silvncr/quarrel/actions/workflows/python-publish.yml/badge.svg)
+![[latest release](https://github.com/silvncr/quarrel/releases/latest)](https://img.shields.io/github/v/release/silvncr/quarrel)
+
+</div>
+
+---
+
 > Works on Python 3.8 and above. Tested on Windows 10.
 
 ## Summary
 
-Tool for *Quarrel* by *Denki Games* (released on *iOS* in 2011 and *Xbox Live Arcade* in 2012).
-
 Provides word game-related tools, and can be configured with custom settings, letter scores, and wordlists.
 
-## How to use (with `quarrel-solver`)
+## Contents
+
+- [Summary](#summary)
+- [Contents](#contents)
+- [The `quarrel-solver` library](#the-quarrel-solver-library)
+- [Direct execution](#direct-execution)
+- [Example case](#example-case)
+- [Settings](#settings)
+- [References](#references)
+
+## The `quarrel-solver` library
 
 Install the `quarrel-solver` library to use all functionality in your own projects.
 
@@ -27,9 +55,28 @@ $ py
 >>> print(
 ...     q.solve_str('wetodlnm')
 ... )
+        --- query: wetodlnm (8 letters) ---
+
+        8 letters - 18 points
+         MELTDOWN
+
+        5 letters - 14 points
+         MOWED
+
+        4 letters - 12 points
+         MEWL
+
+        3 letters - 10 points
+         MEW, MOW, WEM
+
+        2 letters - 6 points
+         EW, OW, WE, WO
+>>> 
 ```
 
-See the example case below to find out what this displays.
+See [the example case below](#example-case) to find out what this displays.
+
+> Note: for the `pip install` command, you can use `quarrel-solver` with a hyphen, or `quarrel_solver` with an underscore. When importing the module in Python or running it from the commandline, you **MUST** use an underscore.
 
 ## Direct execution
 
@@ -45,21 +92,35 @@ If you call the library directly, you'll be greeted with a commandline program. 
 
 Type your letters into the field, press <kbd>Enter</kbd>, and wait for the program to calculate the best words. Once it's done, choose one from the list that corresponds with the number of letters you have available, or the next lowest. See the example below to find out why you might not need to use all of your spaces.
 
-> Please note that if you plan to use the program without the library, you'll need to install its dependencies manually first.
->
-> ```sh
-> $ py -m pip install -r requirements.txt
-> ```
-
 ## Example case
 
 Here's an example using the default program settings. Our situation is the following:
 
-- We're playing *Quarrel* (thus we can only use words up to 8 letters).
-- We have seven (7) spaces.
+- We're playing *Quarrel*, and thus we get 8 letters.
 - Our letters are `wetodlnm`.
+- We have 7 spaces to use.
 
-We'll input our letters and press <kbd>Enter</kbd>.
+After installing the library, we'll open a commandline and run the program.
+
+Since we know we don't need words longer than 8 letters, we can minimise loading time by configuring the program to only calculate for words of that length. We can do this by passing our desired settings as command arguments:
+
+```sh
+$ py -m quarrel_solver --max_words_len 8
+```
+
+> Note: this has the same effect as creating a `settings.json` file, then running the command from the same directory:
+>
+> ```json
+> // settings.json
+> {"max_words_len": 8}
+> ```
+>
+> ```sh
+> ## from folder with settings.json
+> $ py -m quarrel_solver
+> ```
+
+Whichever way the program is run, it will have to load a wordlist. Once it finishes loading, we can input our letters and press <kbd>Enter</kbd>.
 
 ```py
 > wetodlnm
@@ -84,13 +145,13 @@ We'll input our letters and press <kbd>Enter</kbd>.
 > _
 ```
 
-We can't make the anagram `MELTDOWN` because we can only use 7 letters. In this case, our best word is `MOWED` (14 points). Based on this output, we also know that unless our opponent has 8 spaces, they cannot score higher than 14 points.
+This tells us that the anagram is `MELTDOWN`, but we can't make that word because we can only use 7 letters. In this case, our best word is `MOWED` (14 points). Based on this output, we also know that our opponent cannot score higher than us without all 8 spaces.
 
-Note that a word like `LETDOWN` (7 letters) scores the same number of points as `MOWED`. However, `LETDOWN` isn't recognised as a "best word" in this example case. This is because when words are tied for points, the program will choose the word/s with the fewest letters.
+> Note: a word like `LETDOWN` scores the same number of points as `MOWED`, but isn't recognised as a "best word" in this case. This is because when words are tied for points, the program will choose the word/s with the fewest letters.
+>
+> The fewer letters your word has, the faster you can write it into your game. This is especially important in *Quarrel*, as the tiebreaker for equal points is input speed.
 
-The fewer letters your word has, the faster you can write it into your game. This is especially important in *Quarrel*, as the tiebreaker for equal points is input speed.
-
-### Settings
+## Settings
 
 Upon being run directly, the program will automatically generate (or look for) a `settings.json` file in the directory which the command is run from. This file contains the program's settings, which can be changed to suit your needs.
 
@@ -107,16 +168,25 @@ When using `quarrel-solver`, you should can pass a `dict` with any of the follow
 | `letter_scores` | `"quarrel"` | Determines the letter scoring system used for calculating points. The value here is passed into `build_letter_scores()`, and defaults back if invalid. |
 | `max_words_len` | longest length in wordlist | Determines the maximum word length the program will calculate for. |
 | `min_words_len` | `2` | Determines the minimum word length the program will calculate for. |
+| `settings_path`<br>(commandline only) | `None` | Path to the settings file. |
 
 When running directly:
 
-- To change your settings, simply open `settings.json` in a text editor and change any values. Make sure to save the file once you're done.
-- If the settings file is not present in your folder, try running the program and letting it fully load. It should then create the file.
-- After saving your settings, the program will not change if it's already running. Close the program and run it again to use the changed settings.
+- To change your settings, do one of the following:
+  - Open `settings.json` in a text editor and change any values. Make sure to save the file once you're done.
+  - Pass the setting as a command argument like this: `--setting_name value`
+    - This will automatically update the settings file, if applicable.
+
+```sh
+$ py -m quarrel_solver --display_debug true --max_words_len 8
+```
+
+- If `settings.json` is not present in your folder, try running the program and letting it fully load. It should then create the file.
+- After saving `settings.json`, the program will not change if it's already running. Close the program and run it again to use the changed settings.
 
 ## References
 
 This project makes use of the following resources:
 
-- [The `scrabble` library](https://github.com/benjamincrom/scrabble)'s wordlist, adapted from *Collins Scrabble Words (2019)* (source: [*StackExchange*](https://boardgames.stackexchange.com/a/38386))
+- [The `scrabble` library](https://github.com/benjamincrom/scrabble)'s wordlist, adapted from *Collins Scrabble Words (2015)* (source: [*StackExchange*](https://boardgames.stackexchange.com/a/38386))
 - *Quarrel*'s letter scoring system, taken directly from in-game (source: [*Wikipedia*](https://en.wikipedia.org/wiki/Quarrel_(video_game)#Scoring))

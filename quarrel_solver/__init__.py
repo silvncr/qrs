@@ -2,9 +2,21 @@
 Provides word game-related tools, and can be configured with custom settings, letter scores, and wordlists.
 '''
 
-import contextlib, copy, json, scrabble, typing
+import contextlib, copy, json, os, scrabble, sys, typing
 
 wordlist_full = list(copy.deepcopy(scrabble.scrabble.config.ENGLISH_DICTIONARY_SET))
+
+kwargs = [
+	('all_lowercase', bool, False, None, 'Whether output should be lowercase'),
+	('allow_repeats', bool, False, None, 'Whether letters are allowed to repeat'),
+	('display_debug', bool, False, None, 'Whether to display debug information'),
+	('exclude_words', str, [], '*', 'Words to exclude'),
+	('ignore_scores', bool, False, None, 'Whether to ignore scores'),
+	('include_words', str, [], '*', 'Words to include'),
+	('letter_scores', str, 'quarrel', None, 'Scoring system to use'),
+	('max_words_len', int, None, None, 'Maximum length of words'),
+	('min_words_len', int, 2, None, 'Minimum length of words'),
+]
 
 def build_letter_scores(
 	name: typing.Optional[str] = None,
@@ -41,6 +53,27 @@ def build_letter_scores(
 		), {}
 	)
 
+def build_query(
+	query: str,
+	repeat_letters: bool = True,
+) -> str:
+	'''
+	Returns a sorted query string, with optional repeats.
+
+	Args:
+		`query: str`: Query string to sort.
+		`repeat_letters: bool = True`: Whether to allow repeating letters in the query string.
+
+	Returns:
+		The inputted query string, but sorted.
+	'''
+
+	return ''.join(
+		sorted(query)
+		if repeat_letters
+		else sorted(list(set(dict.fromkeys(query))))
+	)
+
 def build_settings(
 	user_settings: typing.Optional[typing.Dict[str, typing.Any]] = None,
 	wordlist: typing.Optional[typing.List[str]] = None,
@@ -50,6 +83,7 @@ def build_settings(
 
 	Args:
 		`user_settings: Optional[dict[str, Any]]`: Custom settings to override the default settings. Defaults to an empty dictionary.
+		`wordlist: Optional[list[str]]`: Wordlist used to determine defaults for word-related settings.
 
 	Returns:
 		A dictionary of settings.
@@ -73,15 +107,7 @@ def build_settings(
 
 	settings = {
 		**{
-			'all_lowercase': False,
-			'allow_repeats': False,
-			'display_debug': False,
-			'exclude_words': [],
-			'ignore_scores': False,
-			'include_words': [],
-			'letter_scores': 'quarrel',
-			'max_words_len': max(len(word) for word in wordlist),
-			'min_words_len': 2,
+			arg: default for arg, _, default, _, _ in kwargs
 		}, **user_settings
 	}
 
@@ -210,6 +236,8 @@ class Ruleset:
 			A tuple containing a dictionary of best words by length, and a boolean indicating whether an anagram was found.
 		'''
 
+		query = build_query(query, not self['allow_repeats'])
+
 		scores_out = {}
 
 		if self['display_debug']:
@@ -294,12 +322,14 @@ class Ruleset:
 			A string representing the output of the solver.
 		'''
 
+		query = build_query(query, not self['allow_repeats'])
+
 		scores_out, anagram_found = self.solve(query)
 
 		anagram_found = '' if anagram_found else '  \t warning: anagram not found\n\n'
 
 		return str(
-			f'  \t--- query: {query} ({len(query)} letters'
+			f'\n  \t--- query: {query} ({len(query)} letters'
 			+ (' + repeats' if self['allow_repeats'] else '') + ') ---\n\n' + (
 				(
 					anagram_found + '\n\n'.join(
@@ -321,6 +351,7 @@ class Ruleset:
 				if any(scores_out[key][0] for key in scores_out.keys())
 				else '\tno words found'
 			)
+			+ '\n'
 		)
 
 	def get_wordlist(

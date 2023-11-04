@@ -1,8 +1,22 @@
-import contextlib, json, os, string, sys
+import argparse, contextlib, json, os, string, sys
 try:
-	from __init__ import build_settings, Ruleset
+	from __init__ import build_settings, kwargs, Ruleset
 except ImportError:
-	from quarrel_solver import build_settings, Ruleset
+	from quarrel_solver import build_settings, kwargs, Ruleset
+
+parser = argparse.ArgumentParser()
+
+for arg, type, default, nargs, help in kwargs:
+	parser.add_argument(
+		f'--{arg}',
+		type=type,
+		nargs=nargs,
+		default=default,
+		required=False,
+		help=help,
+	)
+
+args = parser.parse_args()
 
 with contextlib.suppress(KeyboardInterrupt):
 	print('\n\tloading settings and wordlist..')
@@ -18,13 +32,21 @@ with contextlib.suppress(KeyboardInterrupt):
 	except FileNotFoundError:
 		settings_import = {}
 
-		print('\tcould not load \'settings.json\'; continuing with default settings..')
+		print('\tfailed to load \'settings.json\'; continuing with default settings..')
 
 	q = Ruleset(
-		settings=build_settings(settings_import)
+		settings=build_settings(
+			{
+				**settings_import, **{
+					key: getattr(args, key)
+					for key in [arg for arg, _, _, _, _ in kwargs]
+					if getattr(args, key) and key != 'settings_path'
+				}
+			}
+		)
 	)
 
-	if q['display_debug']:
+	if args.display_debug or q['display_debug']:
 		print(f'\n{q.get_settings_str().rstrip()}')
 
 	try:
@@ -37,7 +59,7 @@ with contextlib.suppress(KeyboardInterrupt):
 		)
 
 	except Exception:
-		print('\n\tcould not save \'settings.json\'; continuing without saving..')
+		print('\tfalied to save \'settings.json\'; continuing without saving..')
 
 	print('\n\t\tdone!')
 
@@ -46,12 +68,7 @@ with contextlib.suppress(KeyboardInterrupt):
 		query = ''
 		while not all([
 			q['min_words_len'] <= len(query) <= q['max_words_len'],
-			all(char not in string.ascii_lowercase for char in query)
+			all(char in string.ascii_lowercase for char in query)
 		]):
-			print('\n' + q.solve_str(
-				''.join(
-					sorted(dict.fromkeys(input('> ').lower()))
-					if q['allow_repeats']
-					else sorted(input('> ').lower())
-				)
-			) + '\n')
+			query = input('> ')
+		print(q.solve_str(query))
