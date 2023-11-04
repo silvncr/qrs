@@ -2,9 +2,17 @@
 Provides word game-related tools, and can be configured with custom settings, letter scores, and wordlists.
 '''
 
-import contextlib, copy, json, os, scrabble, sys, typing
+import contextlib, copy, json, os, sys, typing
 
-wordlist_full = list(copy.deepcopy(scrabble.scrabble.config.ENGLISH_DICTIONARY_SET))
+wordlist_full = list(
+	json.load(
+		open(
+			os.path.join(
+				sys.path[0], 'wordlist.json'
+			)
+		)
+	)
+)
 
 kwargs = [
 	('all_lowercase', bool, False, None, 'Whether output should be lowercase'),
@@ -72,7 +80,7 @@ def build_query(
 		sorted(query)
 		if repeat_letters
 		else sorted(list(set(dict.fromkeys(query))))
-	)
+	).lower()
 
 def build_settings(
 	user_settings: typing.Optional[typing.Dict[str, typing.Any]] = None,
@@ -340,7 +348,7 @@ class Ruleset:
 							else f' - {scores_out[key][1]} points'
 						) + '\n\t ' + ', '.join(
 							sorted(
-								word if self['all_lowercase'] else word.upper()
+								word.lower() if self['all_lowercase'] else word.upper()
 								for word in scores_out[key][0]
 							)
 						)
@@ -349,9 +357,8 @@ class Ruleset:
 					)
 				)
 				if any(scores_out[key][0] for key in scores_out.keys())
-				else '\tno words found'
+				else '\t no words found'
 			)
-			+ '\n'
 		)
 
 	def get_wordlist(
