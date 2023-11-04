@@ -2,15 +2,15 @@
 Provides word game-related tools, and can be configured with custom settings, letter scores, and wordlists.
 '''
 
-import contextlib, copy, json, os, sys, typing
+import contextlib, copy, json, os, pathlib, typing
 
 wordlist_full = list(
-	json.load(
-		open(
+	json.loads(
+		pathlib.Path(
 			os.path.join(
-				sys.path[0], 'wordlist.json'
+				os.path.dirname(__file__), 'wordlist.json'
 			)
-		)
+		).read_text()
 	)
 )
 
@@ -118,6 +118,12 @@ def build_settings(
 			arg: default for arg, _, default, _, _ in kwargs
 		}, **user_settings
 	}
+
+	for key, default in [
+		('max_words_len', max(len(word) for word in wordlist)),
+		('min_words_len', 2),
+	]:
+		settings[key] = settings[key] or default
 
 	settings = {
 		**settings, **{

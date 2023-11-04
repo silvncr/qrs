@@ -1,4 +1,4 @@
-version = '1.5'
+version = '1.12'
 
 from setuptools import setup
 
@@ -13,6 +13,11 @@ setup(
 	include_package_data=True,
 	license='MIT',
 	packages=['quarrel_solver'],
+	package_data={
+		'quarrel_solver': [
+			'*.json'
+		]
+	},
 	setup_requires=['pytest_runner'],
 	python_requires='>=3.6',
 	scripts=[],

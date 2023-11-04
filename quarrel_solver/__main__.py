@@ -47,7 +47,7 @@ with contextlib.suppress(KeyboardInterrupt):
 	)
 
 	if args.display_debug or q['display_debug']:
-		print(f'\n{q.get_settings_str().rstrip()}')
+		print(f'\n{q.get_settings_str().rstrip()}\n')
 
 	try:
 		open(
