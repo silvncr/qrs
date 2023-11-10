@@ -154,5 +154,5 @@ cython_debug/
 # Visual Studio Code
 .vscode/
 
-# Settings file
+# qrs settings
 settings.json
