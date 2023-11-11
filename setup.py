@@ -1,4 +1,4 @@
-version = '0.2.0'
+version = '1.0.0'
 
 from setuptools import setup
 
@@ -24,7 +24,11 @@ setup(
 	python_requires='>=3.6',
 	scripts=[],
 	tests_require=['pytest'],
-	entry_points={},
+	entry_points={
+		'console_scripts': [
+			'qrs=qrs:main'
+		]
+	},
 	zip_safe=True,
 	classifiers=[
 		'Programming Language :: Python',

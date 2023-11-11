@@ -38,7 +38,7 @@ Provides word game-related tools, and can be configured with custom settings, le
 Install the `qrs` library to use all functionality in your own projects.
 
 ```sh
-$ py -m pip install --upgrade qrs
+$ pip install --upgrade qrs
 $ py
 ```
 
@@ -78,13 +78,13 @@ $ py
 ## Direct execution
 
 ```sh
-$ py -m qrs
+$ qrs
 ```
 
 If you call the library directly, you'll be greeted with a commandline program. Its input screen looks like this:
 
 ```py
-> _
+qrs: _
 ```
 
 Type your letters into the field, press <kbd>Enter</kbd>, and wait for the program to calculate the best words. Once it's done, choose one from the list that corresponds with the number of letters you have available, or the next lowest. See the example below to find out why you might not need to use all of your spaces.
@@ -104,7 +104,7 @@ After installing the library, we'll open a commandline and run the program.
 Since we know we don't need words longer than 8 letters, we can minimise loading time by configuring the program to only calculate for words of that length. We can do this by passing our desired settings as command arguments:
 
 ```sh
-$ py -m qrs --max 8
+$ qrs --max 8
 ```
 
 > Note: this has the same effect as creating a `settings.json` file, then running the command from the same directory:
@@ -116,13 +116,13 @@ $ py -m qrs --max 8
 >
 > ```sh
 > ## from folder with settings.json
-> $ py -m qrs
+> $ qrs
 > ```
 
 Whichever way the program is run, it will have to load a wordlist. Once it finishes loading, we can input our letters and press <kbd>Enter</kbd>.
 
 ```py
-> wetodlnm
+qrs: wetodlnm
 
         --- query: delmnotw (8 letters) ---
 
@@ -141,7 +141,7 @@ Whichever way the program is run, it will have to load a wordlist. Once it finis
         2 letters - 6 points
          OW, WE, WO
 
-> _
+qrs: _
 ```
 
 This tells us that the anagram is `MELTDOWN`, but we can't make that word because we can only use 7 letters. In this case, our best word is `MOWED` (14 points). Based on this output, we also know that our opponent cannot score higher than us without all 8 spaces.
@@ -178,7 +178,7 @@ When running directly:
     - This will automatically update the settings file, if applicable.
 
 ```sh
-$ py -m qrs --lower --max 8 --debug
+$ qrs --lower --max 8 --debug
 ```
 
 - If `settings.json` is not present in your folder, try running the program and letting it fully load. It should then create the file.

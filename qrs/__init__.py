@@ -6,8 +6,10 @@ Provides word game-related tools, and can be configured with custom settings, le
 from argparse import Action, ArgumentParser
 from contextlib import suppress
 from copy import deepcopy
-from json import dumps
+from json import decoder, dumps, load
 from os import path
+from string import ascii_lowercase
+from sys import path as syspath
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 # initialise parser
@@ -468,3 +470,103 @@ class Ruleset:
 
 		# return wordlist as specified type
 		return output_type(self.wordlist)
+
+# entry point
+def main():
+
+	# set arguments
+	for arg, sarg, type, default, nargs, help in kwargs:
+		if type == bool:
+			parser.add_argument(
+				f'--{arg}',
+				f'-{sarg}',
+				dest=arg,
+				action=BooleanAction,
+				default=None,
+				help=help
+			)
+		else:
+			parser.add_argument(
+				f'--{arg}',
+				f'-{sarg}',
+				type=type,
+				nargs=nargs,
+				default=default,
+				required=False,
+				help=help,
+			)
+
+	# get arguments
+	args = parser.parse_args()
+
+	# show message
+	with suppress(KeyboardInterrupt):
+		print('\n\tloading settings and wordlist..')
+
+		# load settings
+		try:
+			with open(
+				path.join(
+					syspath[0], 'settings.json'
+				), 'tr'
+			) as settings_file:
+				settings_import = load(settings_file)
+
+		# file is empty
+		except decoder.JSONDecodeError:
+			settings_import = {}
+
+			# display message
+			print('\t\'settings.json\' is empty or invalid; continuing with default/given settings..')
+
+		# file cannot be loaded
+		except FileNotFoundError:
+			settings_import = {}
+
+			# display message
+			print('\tfailed to load \'settings.json\'; continuing with default/given settings..')
+
+		# load ruleset
+		q = Ruleset(
+			settings=build_settings(
+				{
+					**settings_import, **{
+						arg: getattr(args, arg)
+						for arg, _, _, _, _, _ in kwargs
+						if getattr(args, arg) is not None
+					}
+				}
+			)
+		)
+
+		# debug info
+		if (args.debug or q['debug']):
+			print(f'\n{q.get_settings_str()}\n')
+
+		# save settings
+		try:
+			with open(
+				path.join(
+					syspath[0], 'settings.json'
+				), 'tw'
+			) as settings_file:
+				settings_file.write(
+					q.get_settings_str()
+				)
+
+		# if settings file cannot be saved
+		except Exception:
+			print('\tfailed to save \'settings.json\'; continuing without saving..')
+
+		# show message
+		print('\n\t\tdone!\n')
+
+		# input loop
+		while True:
+			query = ''
+			while not all([
+				q['min'] <= len(query) <= q['max'],
+				all(char in ascii_lowercase for char in query)
+			]):
+				query = input('qrs: ')
+			print(q.solve_str(query))
