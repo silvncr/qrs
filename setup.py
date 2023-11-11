@@ -1,4 +1,4 @@
-version = '0.1.0'
+version = '0.2.0'
 
 from setuptools import setup
 
@@ -18,10 +18,10 @@ setup(
 			'*.json',
 			'*.py',
 			'*.txt',
-		]
+		],
 	},
 	setup_requires=['pytest_runner'],
-	python_requires='>=3.9',
+	python_requires='>=3.6',
 	scripts=[],
 	tests_require=['pytest'],
 	entry_points={},
@@ -29,7 +29,7 @@ setup(
 	classifiers=[
 		'Programming Language :: Python',
 		'Programming Language :: Python :: 3',
-		'Programming Language :: Python :: 3.9',
+		'Programming Language :: Python :: 3.6',
 		'Topic :: Games/Entertainment :: Board Games',
 		'Topic :: Games/Entertainment :: Puzzle Games',
 		'Topic :: Software Development :: Libraries',

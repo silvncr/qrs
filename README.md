@@ -18,7 +18,7 @@
 
 Provides word game-related tools, and can be configured with custom settings, letter scores, and wordlists.
 
-> Works on Python 3.9 and above. Tested on Windows 10.
+> Works on Python 3.6 and above. Tested on Windows 10.
 
 ---
 

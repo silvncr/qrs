@@ -8,7 +8,7 @@ from contextlib import suppress
 from copy import deepcopy
 from json import dumps
 from os import path
-from typing import Any, Optional, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 # initialise parser
 parser = ArgumentParser()
@@ -38,7 +38,7 @@ kwargs = [
 # get letter scores for name
 def build_letter_scores(
 	name: Optional[str] = None,
-) -> dict[str, int]:
+) -> Dict[str, int]:
 	'''
 	Returns the letter scores for the given name. To be passed into the `Ruleset` class.
 
@@ -98,9 +98,9 @@ def build_query(
 
 # get settings object from settings
 def build_settings(
-	user_settings: Optional[dict[str, Any]] = None,
-	wordlist: Optional[list[str]] = None,
-) -> dict[str, Any]:
+	user_settings: 'Optional[dict[str, Any]]' = None,
+	wordlist: 'Optional[list[str]]' = None,
+) -> Dict[str, Any]:
 	'''
 	Returns the settings for the given user settings. To be passsed into the `Ruleset` class.
 
@@ -134,20 +134,23 @@ def build_settings(
 
 	# build defaults
 	settings = {
-		str(arg): default for arg, _, _, default, _, _ in kwargs
-	} | user_settings
-
-	# min-max defaults
-	settings['min'] = max(user_settings['min'], 2) if 'min' in user_settings else 2
-	settings['max'] = min(user_settings['max'], max(len(word) for word in wordlist)) if 'max' in user_settings else max(len(word) for word in wordlist)
+		**{str(arg): default for arg, _, _, default, _, _ in kwargs},
+		**user_settings,
+		'min': max(user_settings['min'], 2) if 'min' in user_settings else 2,
+		'max': min(user_settings['max'], max(len(word) for word in wordlist))
+		if 'max' in user_settings
+		else max(len(word) for word in wordlist),
+	}
 
 	# set min-max
-	return settings | {
-		'game': str(
-			settings['game']
-			if build_letter_scores(settings['game'])
-			else 'quarrel'
-		)
+	return {
+		**settings, **{
+			'game': str(
+				settings['game']
+				if build_letter_scores(settings['game'])
+				else 'quarrel'
+			)
+		}
 	}
 
 # boolean action
@@ -197,8 +200,8 @@ class BooleanAction(Action):
 class Ruleset:
 	def __init__(
 		self,
-		settings: Optional[dict[str, Any]] = None,
-		wordlist: Optional[list[str]] = None,
+		settings: 'Optional[dict[str, Any]]' = None,
+		wordlist: 'Optional[list[str]]' = None,
 	) -> None:
 		'''
 		Defines a word game ruleset with the given settings and wordlist.
@@ -275,7 +278,7 @@ class Ruleset:
 	# get settings
 	def get_settings(
 		self,
-	) -> dict[str, Any]:
+	) -> Dict[str, Any]:
 		'''
 		Returns the current settings.
 		'''
@@ -298,7 +301,7 @@ class Ruleset:
 	def solve(
 		self,
 		query: str,
-	) -> tuple[dict[int, list[Union[list[str], str]]], bool]:
+	) -> Tuple[Dict[int, List[Union[List[str], str]]], bool]:
 		'''
 		Finds all possible words that can be formed from the given query string using the set wordlist.
 
@@ -323,8 +326,10 @@ class Ruleset:
 		for len_iter in range(
 			2, (self['max'] if self['repeats'] else len(query)) + 1
 		)[::-1]:
-			scores = scores | {
-				len_iter: [[], 0]
+			scores = {
+				**scores, **{
+					len_iter: [[], 0]
+				}
 			}
 
 			# iterate through wordlist
@@ -449,7 +454,7 @@ class Ruleset:
 	# get wordlist
 	def get_wordlist(
 		self,
-		output_type: type = list[str],
+		output_type: type = List[str],
 	) -> Any:
 		'''
 		Returns the current wordlist, as defined in the ruleset settings.

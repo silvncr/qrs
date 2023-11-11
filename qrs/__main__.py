@@ -75,17 +75,19 @@ with suppress(KeyboardInterrupt):
 	# load ruleset
 	q = Ruleset(
 		settings=build_settings(
-			settings_import | {
-				arg: getattr(args, arg)
-				for arg, _, _, _, _, _ in kwargs
-				if getattr(args, arg) is not None
+			{
+				**settings_import, **{
+					arg: getattr(args, arg)
+					for arg, _, _, _, _, _ in kwargs
+					if getattr(args, arg) is not None
+				}
 			}
 		)
 	)
 
 	# debug info
 	if (args.debug or q['debug']):
-		print(f'\ncurrent settings: {q.get_settings_str()}')
+		print(f'\n{q.get_settings_str()}')
 
 	# save settings
 	try:
@@ -112,5 +114,5 @@ with suppress(KeyboardInterrupt):
 			q['min'] <= len(query) <= q['max'],
 			all(char in ascii_lowercase for char in query)
 		]):
-			query = input('> ')
+			query = input('qrs: ')
 		print(q.solve_str(query))
