@@ -2,6 +2,8 @@
 Provides word game-related tools, and can be configured with custom settings, letter scores, and wordlists.
 '''
 
+__version__ = '1.1.0'
+
 # imports
 from argparse import Action, ArgumentParser
 from contextlib import suppress
@@ -507,7 +509,7 @@ def main():
 		try:
 			with open(
 				path.join(
-					syspath[0], 'settings.json'
+					syspath[0], 'qrs.json'
 				), 'tr'
 			) as settings_file:
 				settings_import = load(settings_file)
@@ -517,14 +519,14 @@ def main():
 			settings_import = {}
 
 			# display message
-			print('\t\'settings.json\' is empty or invalid; continuing with default/given settings..')
+			print('\t\'qrs.json\' is empty or invalid; continuing with default/given settings..')
 
 		# file cannot be loaded
 		except FileNotFoundError:
 			settings_import = {}
 
 			# display message
-			print('\tfailed to load \'settings.json\'; continuing with default/given settings..')
+			print('\tfailed to load \'qrs.json\'; continuing with default/given settings..')
 
 		# load ruleset
 		q = Ruleset(
@@ -539,15 +541,11 @@ def main():
 			)
 		)
 
-		# debug info
-		if (args.debug or q['debug']):
-			print(f'\n{q.get_settings_str()}\n')
-
 		# save settings
 		try:
 			with open(
 				path.join(
-					syspath[0], 'settings.json'
+					syspath[0], 'qrs.json'
 				), 'tw'
 			) as settings_file:
 				settings_file.write(
@@ -556,7 +554,11 @@ def main():
 
 		# if settings file cannot be saved
 		except Exception:
-			print('\tfailed to save \'settings.json\'; continuing without saving..')
+			print('\tfailed to save \'qrs.json\'; continuing without saving..')
+
+		# debug info
+		if (args.debug or q['debug']):
+			print(f'\n{q.get_settings_str()}')
 
 		# show message
 		print('\n\t\tdone!\n')
@@ -570,3 +572,7 @@ def main():
 			]):
 				query = input('qrs: ')
 			print(q.solve_str(query))
+
+# main function
+if __name__ == '__main__':
+	main()

@@ -155,4 +155,4 @@ cython_debug/
 .vscode/
 
 # qrs settings
-settings.json
+qrs.json

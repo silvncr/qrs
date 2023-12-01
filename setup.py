@@ -1,10 +1,10 @@
-version = '1.0.0'
+from qrs import __version__
 
 from setuptools import setup
 
 setup(
 	name='qrs',
-	version=version,
+	version=__version__,
 	description='Tool for Quarrel (and other word games)',
 	long_description=open('README.md', 'r').read(),
 	long_description_content_type='text/markdown',
@@ -15,7 +15,6 @@ setup(
 	packages=['qrs'],
 	package_data={
 		'qrs': [
-			'*.json',
 			'*.py',
 			'*.txt',
 		],
@@ -33,7 +32,6 @@ setup(
 	classifiers=[
 		'Programming Language :: Python',
 		'Programming Language :: Python :: 3',
-		'Programming Language :: Python :: 3.6',
 		'Topic :: Games/Entertainment :: Board Games',
 		'Topic :: Games/Entertainment :: Puzzle Games',
 		'Topic :: Software Development :: Libraries',

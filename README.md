@@ -1,18 +1,10 @@
+<!-- omit from toc -->
+# qrs
 
----
+Tool for *Quarrel* (and other word games)
 
-<div align="center">
-
-<h1><code>pip install qrs</code></h1>
-
-<h3>Tool for <em>Quarrel</em> (and other word games)</h3>
-
-![[publish status](https://github.com/silvncr/qrs/actions/workflows/python-publish.yml)](https://github.com/silvncr/qrs/actions/workflows/python-publish.yml/badge.svg)
+![[publish status](https://github.com/silvncr/qrs/actions/workflows/python-publish.yml)](https://img.shields.io/github/actions/workflow/status/silvncr/qrs/python-publish.yml)
 ![[latest release](https://github.com/silvncr/qrs/releases/latest)](https://img.shields.io/github/v/release/silvncr/qrs)
-
-</div>
-
----
 
 ## Summary
 
@@ -20,26 +12,24 @@ Provides word game-related tools, and can be configured with custom settings, le
 
 > Works on Python 3.6 and above. Tested on Windows 10.
 
----
-
 ## Contents
 
 - [Summary](#summary)
 - [Contents](#contents)
-- [The `qrs` library](#the-qrs-library)
+- [The qrs library](#the-qrs-library)
 - [Direct execution](#direct-execution)
 - [Example case](#example-case)
 - [Settings](#settings)
 
----
+## The qrs library
 
-## The `qrs` library
-
-Install the `qrs` library to use all functionality in your own projects.
+Install the qrs library to use all of its functionality in your own projects.
 
 ```sh
-$ pip install --upgrade qrs
-$ py
+$ python -m pip install --upgrade qrs
+  # library installs
+$ python
+  # see below
 ```
 
 ```py
@@ -73,23 +63,17 @@ $ py
 >>> _
 ```
 
----
-
 ## Direct execution
 
 ```sh
 $ qrs
-```
 
-If you call the library directly, you'll be greeted with a commandline program. Its input screen looks like this:
-
-```py
 qrs: _
 ```
 
-Type your letters into the field, press <kbd>Enter</kbd>, and wait for the program to calculate the best words. Once it's done, choose one from the list that corresponds with the number of letters you have available, or the next lowest. See the example below to find out why you might not need to use all of your spaces.
+Upon being called from the commandline, it will display an input screen.
 
----
+Type your letters into the field, press Enter, and wait for the program to calculate the best words. Once it's done, choose one from the list that corresponds with the number of letters you have available, or the next lowest. See the example below to find out why you might not need to use all of your spaces.
 
 ## Example case
 
@@ -105,21 +89,23 @@ Since we know we don't need words longer than 8 letters, we can minimise loading
 
 ```sh
 $ qrs --max 8
+
+qrs: _
 ```
 
-> Note: this has the same effect as creating a `settings.json` file, then running the command from the same directory:
+> Note: this has the same effect as creating a `qrs.json` file, then running the command from the same directory:
 >
 > ```jsonc
-> // settings.json
+> // qrs.json
 > {"max": 8}
 > ```
 >
 > ```sh
-> ## from folder with settings.json
+> ## from folder with qrs.json
 > $ qrs
 > ```
 
-Whichever way the program is run, it will have to load a wordlist. Once it finishes loading, we can input our letters and press <kbd>Enter</kbd>.
+Whichever way the program is run, it will have to load a wordlist. Once it finishes loading, we can input our letters and press Enter.
 
 ```py
 qrs: wetodlnm
@@ -150,13 +136,11 @@ This tells us that the anagram is `MELTDOWN`, but we can't make that word becaus
 >
 > The fewer letters your word has, the faster you can write it into your game. This is especially important in *Quarrel*, as the tiebreaker for equal points is input speed.
 
----
-
 ## Settings
 
-Upon being run directly, the program will automatically generate (or look for) a `settings.json` file in the directory which the command is run from. This file contains the program's settings, which can be changed to suit your needs.
+Upon being run from the commandline, the program will automatically generate (or look for) a `qrs.json` file in the directory which the command is run from. This file contains the program's settings, which can be changed to suit your needs.
 
-When using `qrs`, you should can pass a `dict` with any of the following keys into `build_settings` to generate a full settings object, then pass the output to a `Ruleset` to create a new instance. Here are all the currently supported settings:
+When using qrs as a library, you should pass a `dict` with any of the following keys into `build_settings` to generate a full settings object, then pass the output to a `Ruleset` to create a new instance. Here are all the currently supported settings:
 
 | Setting | Default | Description |
 |:-:|:-:|:--|
@@ -173,15 +157,17 @@ When using `qrs`, you should can pass a `dict` with any of the following keys in
 When running directly:
 
 - To change your settings, do one of the following:
-  - Open `settings.json` in a text editor and change any values. Make sure to save the file once you're done.
+  - Open `qrs.json` in a text editor and change any values. Make sure to save the file once you're done.
   - Pass the setting as a command argument like this: `--setting value`
     - This will automatically update the settings file, if applicable.
 
 ```sh
 $ qrs --lower --max 8 --debug
+
+  # debug info displayed here
+
+qrs: _
 ```
 
-- If `settings.json` is not present in your folder, try running the program and letting it fully load. It should then create the file.
-- After saving `settings.json`, the program will not change if it's already running. Close the program and run it again to use the changed settings.
-
----
+- If `qrs.json` is not present in your folder, try running the program and letting it fully load. It should then create the file.
+- After saving `qrs.json`, the program will not change if it's already running. Close the program and run it again to use the changed settings.
