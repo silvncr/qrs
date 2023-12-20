@@ -1,7 +1,7 @@
 <!-- omit from toc -->
 # qrs
 
-Tool for *Quarrel* (and other word games)
+tool for *Quarrel* (and other word games)
 
 ![[publish status](https://github.com/silvncr/qrs/actions/workflows/python-publish.yml)](https://img.shields.io/github/actions/workflow/status/silvncr/qrs/python-publish.yml)
 ![[latest release](https://github.com/silvncr/qrs/releases/latest)](https://img.shields.io/github/v/release/silvncr/qrs)
