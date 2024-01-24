@@ -1,11 +1,8 @@
 '''
-Provides word game-related tools, and can be configured with custom settings, letter scores, and wordlists.
+Provides word game-related tools that can be configured with custom settings, letter scores, and wordlists.
 '''
 
-__version__ = '1.1.0'
-
 # imports
-from argparse import Action, ArgumentParser
 from contextlib import suppress
 from copy import deepcopy
 from json import decoder, dumps, load
@@ -14,8 +11,13 @@ from string import ascii_lowercase
 from sys import path as syspath
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-# initialise parser
-parser = ArgumentParser()
+# metadata
+__author__ = 'silvncr'
+__license__ = 'MIT'
+__module_name__ = 'qrs'
+__python_version__ = '3.6'
+__version__ = '1.2.0'
+
 
 # get full wordlist from file
 wordlist_full = sorted(
@@ -26,17 +28,17 @@ wordlist_full = sorted(
 	).read().strip().split('\n')
 )
 
-# commandline arguments; formatted as (arg, sarg, type, default, nargs, help)
+# command-line arguments; formatted as (arg, sarg, type, default, multiple, help)
 kwargs = [
-	('debug', 'd', bool, False, '?', 'Whether to display debug information'),
-	('exclude', 'e', str, [], '*', 'Words to exclude'),
+	('debug', 'd', bool, False, ..., 'Whether to display debug information'),
+	('exclude', 'e', str, [], True, 'Words to exclude'),
 	('game', 'g', str, 'quarrel', None, 'Scoring system to use'),
-	('include', 'i', str, [], '*', 'Words to include'),
-	('lower', 'l', bool, False, '?', 'Whether output should be lowercase'),
-	('max', 'm', int, None, None, 'Maximum length of words'),
+	('include', 'i', str, [], True, 'Words to include'),
+	('lower', 'l', bool, False, ..., 'Whether output should be lowercase'),
+	('max', 'm', int, max(len(word) for word in wordlist_full), None, 'Maximum length of words'),
 	('min', 'n', int, 2, None, 'Minimum length of words'),
-	('noscores', 's', bool, False, '?', 'Whether to ignore scores'),
-	('repeats', 'r', bool, False, '?', 'Whether letters are allowed to repeat'),
+	('noscores', 's', bool, False, ..., 'Whether to ignore scores'),
+	('repeats', 'r', bool, False, ..., 'Whether letters are allowed to repeat'),
 ]
 
 # get letter scores for name
@@ -156,49 +158,6 @@ def build_settings(
 			)
 		}
 	}
-
-# boolean action
-class BooleanAction(Action):
-	def __init__(
-		self,
-		option_strings,
-		dest,
-		nargs='?',
-		const=True,
-		default=None,
-		type=str,
-		choices=None,
-		required=False,
-		help=None,
-		metavar=None,
-	):
-		super(BooleanAction, self).__init__(
-			option_strings,
-			dest,
-			nargs=nargs,
-			const=const,
-			default=default,
-			type=type,
-			choices=choices,
-			required=required,
-			help=help,
-			metavar=metavar
-		)
-
-	# parse boolean
-	def __call__(
-		self,
-		parser,
-		namespace,
-		values,
-		option_string=None
-	):
-		setattr(
-			namespace, self.dest, True if values is None else not any(
-				str(values).lower().startswith(i)
-				for i in ['f', 'n']
-			),
-		)
 
 # word game ruleset class
 class Ruleset:
@@ -476,30 +435,16 @@ class Ruleset:
 # entry point
 def main():
 
-	# set arguments
-	for arg, sarg, type, default, nargs, help in kwargs:
-		if type == bool:
-			parser.add_argument(
-				f'--{arg}',
-				f'-{sarg}',
-				dest=arg,
-				action=BooleanAction,
-				default=None,
-				help=help
-			)
-		else:
-			parser.add_argument(
-				f'--{arg}',
-				f'-{sarg}',
-				type=type,
-				nargs=nargs,
-				default=default,
-				required=False,
-				help=help,
-			)
+	# imports
+	from jarguments import JArgument, JParser
 
 	# get arguments
-	args = parser.parse_args()
+	args = JParser(
+		*{
+			JArgument(arg, type, default, sarg, nargs, help)
+			for arg, sarg, type, default, nargs, help in kwargs
+		}
+	)
 
 	# show message
 	with suppress(KeyboardInterrupt):
@@ -535,7 +480,7 @@ def main():
 					**settings_import, **{
 						arg: getattr(args, arg)
 						for arg, _, _, _, _, _ in kwargs
-						if getattr(args, arg) is not None
+						if getattr(args, arg, None) is not None
 					}
 				}
 			)

@@ -8,7 +8,7 @@ tool for *Quarrel* (and other word games)
 
 ## Summary
 
-Provides word game-related tools, and can be configured with custom settings, letter scores, and wordlists.
+Provides word game-related tools that can be configured with custom settings, letter scores, and wordlists.
 
 > Works on Python 3.6 and above. Tested on Windows 10.
 
@@ -23,13 +23,10 @@ Provides word game-related tools, and can be configured with custom settings, le
 
 ## The qrs library
 
-Install the qrs library to use all of its functionality in your own projects.
+Install the qrs library to use its functionality in your projects.
 
 ```sh
-$ python -m pip install --upgrade qrs
-  # library installs
-$ python
-  # see below
+python -m pip install --upgrade qrs
 ```
 
 ```py
@@ -71,21 +68,21 @@ $ qrs
 qrs: _
 ```
 
-Upon being called from the commandline, it will display an input screen.
+Upon being called from the command line, it will display an input screen.
 
-Type your letters into the field, press Enter, and wait for the program to calculate the best words. Once it's done, choose one from the list that corresponds with the number of letters you have available, or the next lowest. See the example below to find out why you might not need to use all of your spaces.
+Type your letters into the field, press Enter, and wait for the program to calculate the best words. Once done, choose one from the list that corresponds with the number of letters you have available or the next lowest. See the example below to find out why you might not need to use all of your spaces.
 
 ## Example case
 
 Here's an example using the default program settings. Our situation is the following:
 
-- We're playing *Quarrel*, and thus we get 8 letters.
+- We're playing *Quarrel*, and thus, we get eight letters.
 - Our letters are `wetodlnm`.
-- We have 7 spaces to use.
+- We have seven spaces to use.
 
-After installing the library, we'll open a commandline and run the program.
+After installing the library, we'll open a command line and run the program.
 
-Since we know we don't need words longer than 8 letters, we can minimise loading time by configuring the program to only calculate for words of that length. We can do this by passing our desired settings as command arguments:
+Since we know we don't need words longer than eight letters, we can minimise loading time by configuring the program to only calculate for words of that length. We can do this by passing our desired settings as command arguments:
 
 ```sh
 $ qrs --max 8
@@ -105,7 +102,7 @@ qrs: _
 > $ qrs
 > ```
 
-Whichever way the program is run, it will have to load a wordlist. Once it finishes loading, we can input our letters and press Enter.
+The program will have to load a wordlist whichever way it is run. Once it finishes loading, we can input our letters and press Enter.
 
 ```py
 qrs: wetodlnm
@@ -130,7 +127,7 @@ qrs: wetodlnm
 qrs: _
 ```
 
-This tells us that the anagram is `MELTDOWN`, but we can't make that word because we can only use 7 letters. In this case, our best word is `MOWED` (14 points). Based on this output, we also know that our opponent cannot score higher than us without all 8 spaces.
+This output tells us that the anagram is `MELTDOWN`, but we can't make that word because we can only use seven letters. In this case, our best word is `MOWED` (14 points). Based on this output, we also know that our opponent cannot score higher than us without all eight spaces.
 
 > Note: a word like `LETDOWN` scores the same number of points as `MOWED`, but isn't recognised as a "best word" in this case. This is because when words are tied for points, the program will choose the word/s with the fewest letters.
 >
@@ -138,7 +135,7 @@ This tells us that the anagram is `MELTDOWN`, but we can't make that word becaus
 
 ## Settings
 
-Upon being run from the commandline, the program will automatically generate (or look for) a `qrs.json` file in the directory which the command is run from. This file contains the program's settings, which can be changed to suit your needs.
+Upon being run from the command line, the program will automatically generate (or look for) a `qrs.json` file in the directory from which the command is run. This file contains the program's settings, which can be changed to suit your needs.
 
 When using qrs as a library, you should pass a `dict` with any of the following keys into `build_settings` to generate a full settings object, then pass the output to a `Ruleset` to create a new instance. Here are all the currently supported settings:
 
@@ -159,7 +156,7 @@ When running directly:
 - To change your settings, do one of the following:
   - Open `qrs.json` in a text editor and change any values. Make sure to save the file once you're done.
   - Pass the setting as a command argument like this: `--setting value`
-    - This will automatically update the settings file, if applicable.
+    - If applicable, this will automatically update the settings file.
 
 ```sh
 $ qrs --lower --max 8 --debug
@@ -169,5 +166,5 @@ $ qrs --lower --max 8 --debug
 qrs: _
 ```
 
-- If `qrs.json` is not present in your folder, try running the program and letting it fully load. It should then create the file.
-- After saving `qrs.json`, the program will not change if it's already running. Close the program and run it again to use the changed settings.
+- If `qrs.json` is not in your folder, try running the program and letting it fully load. It should then create the file.
+- After saving `qrs.json`, the program will not change if it's already running. Close the program and rerun it to use the changed settings.
