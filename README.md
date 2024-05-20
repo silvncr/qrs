@@ -3,15 +3,16 @@
 
 tool for *Quarrel* (and other word games)
 
-![downloads](https://img.shields.io/pypi/dm/qrs)
-![status](https://img.shields.io/github/actions/workflow/status/silvncr/qrs/python-publish.yml)
 ![version](https://img.shields.io/pypi/v/qrs)
+![status](https://img.shields.io/github/actions/workflow/status/silvncr/qrs/python-publish.yml)
+![downloads](https://img.shields.io/pypi/dm/qrs)
 
 ## Summary
 
 Provides word game-related tools that can be configured with custom settings, letter scores, and wordlists.
 
-> Supports Python 3.8 and above. Tested on Windows 10.
+- :snake: Supports Python 3.8 and above. Tested on Windows 10.
+- :star: Show your support by leaving a star!
 
 ## Contents
 
