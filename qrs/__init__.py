@@ -18,7 +18,7 @@ __author__ = 'silvncr'
 __license__ = 'MIT'
 __module_name__ = 'qrs'
 __python_version__ = '3.8'
-__version__ = '1.3.0'
+__version__ = '1.3.1'
 
 
 # get full wordlist from file
@@ -28,14 +28,14 @@ with open(
 		'wordlist.txt',
 	),
 ) as f:
-	wordlist_full = sorted(
+	wordlist_full: list[str] = sorted(
 		f.read().splitlines(),
 	)
-max_length_full = max(len(word) for word in wordlist_full)
+max_length_full: int = max(len(word) for word in wordlist_full)
 
 
 # command line arguments; (arg, sarg, type, default, multiple, help)
-qrs_kwargs = [
+qrs_kwargs: list[tuple] = [
 	('debug', 'd', bool, False, ..., 'Whether to display debug information'),
 	('doubles', 'b', bool, False, ..., 'Whether to show longer, tied words'),
 	('exclude', 'e', str, [], True, 'List of words to exclude'),
@@ -280,7 +280,8 @@ class Ruleset:
 
 		Returns:
 		-------
-			The value of the given setting.
+			The value of the given setting. Can be any type, as defined in
+			`qrs_kwargs`.
 		'''
 
 		# return setting, or raise error
@@ -315,7 +316,7 @@ class Ruleset:
 		self: Self,
 		query: str,
 		/,
-	) -> tuple[dict[int, list[str]], bool]:
+	) -> tuple[dict[int, tuple[list[str], int]], bool]:
 		'''
 		Finds all possible words that can be formed from the given query
 		string using the set wordlist.
@@ -335,7 +336,7 @@ class Ruleset:
 		query = build_query(query, repeat_letters=not self['repeats'])
 
 		# initialise output object
-		scores = {}
+		scores: dict[int, tuple[list[str], int]] = {}
 
 		# prepare debug output
 		if self['debug']:
@@ -348,7 +349,7 @@ class Ruleset:
 		)[::-1]:
 			scores = {
 				**scores,
-				len_iter: [[], 0],
+				len_iter: ([], 0),
 			}
 
 			# iterate through wordlist
@@ -430,7 +431,7 @@ class Ruleset:
 
 					# update score
 					if not self['noscores']:
-						scores[len_iter][1] = self.scores[
+						scores[len_iter] = scores[len_iter][0], self.scores[
 							scores[len_iter][0][0]
 						]
 
@@ -505,7 +506,7 @@ class Ruleset:
 		scores, anagram_found = self.solve(query)
 
 		# prepare anagram message
-		anagram_found = '' \
+		anagram_msg = '' \
 			if anagram_found \
 			else '  \t warning: anagram not found\n\n'
 
@@ -514,7 +515,7 @@ class Ruleset:
 			f'\n  \t--- query: {query} ({len(query)} letters'
 			+ (' + repeats' if self['repeats'] else '') + ') ---\n\n' + (
 				(
-					anagram_found + '\n\n'.join(
+					anagram_msg + '\n\n'.join(
 						f'\t{key} letters'
 						+ (
 							''

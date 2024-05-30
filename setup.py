@@ -44,6 +44,5 @@ setup(
 		'Programming Language :: Python',
 		'Topic :: Games/Entertainment :: Board Games',
 		'Topic :: Games/Entertainment :: Puzzle Games',
-		'Typing :: Typed',
 	],
 )
