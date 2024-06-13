@@ -11,14 +11,13 @@ from json import decoder, dumps, load
 from os import path as os_path
 from string import ascii_lowercase
 from sys import path as sys_path
-from typing import Any, Self
+from typing import Any, List
 
 # metadata
 __author__ = 'silvncr'
 __license__ = 'MIT'
 __module_name__ = 'qrs'
-__python_version__ = '3.8'
-__version__ = '1.3.1'
+__version__ = '1.3.2'
 
 
 # get full wordlist from file
@@ -265,7 +264,7 @@ class Ruleset:
 
 	# getitem method
 	def __getitem__(
-			self: Self,
+			self: Ruleset,
 			key: str,
 			/,
 		) -> ...:
@@ -292,7 +291,7 @@ class Ruleset:
 
 	# get settings
 	def get_settings(
-		self: Self,
+		self: Ruleset,
 		/,
 	) -> dict[str, Any]:
 		'Returns the current settings as a dictionary.'
@@ -302,7 +301,7 @@ class Ruleset:
 
 	# get settings as string
 	def get_settings_str(
-		self: Self,
+		self: Ruleset,
 		/,
 	) -> str:
 		'Returns the current settings as a JSON string, formatted with tabs.'
@@ -313,7 +312,7 @@ class Ruleset:
 
 	# solve function
 	def solve(
-		self: Self,
+		self: Ruleset,
 		query: str,
 		/,
 	) -> tuple[dict[int, tuple[list[str], int]], bool]:
@@ -399,11 +398,7 @@ class Ruleset:
 
 						# debug info
 						if self['debug']:
-							print(f'\t{[
-								_length_fits,
-								_spaces_fit,
-								_doubles_fits,
-							]}')
+							print(f'\t{[_length_fits, _spaces_fit, _doubles_fits]}')
 
 						# check if word fits
 						if all([
@@ -480,7 +475,7 @@ class Ruleset:
 
 	# solve to string function
 	def solve_str(
-		self: Self,
+		self: Ruleset,
 		query: str,
 		/,
 	) -> str:
@@ -540,8 +535,8 @@ class Ruleset:
 
 	# get wordlist
 	def get_wordlist(
-		self: Self,
-		output_type: type = list[str],
+		self: Ruleset,
+		output_type: type = List[str],
 		/,
 	) -> ...:
 		'''
