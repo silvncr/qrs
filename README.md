@@ -137,30 +137,32 @@ Upon being run from the command line, the program will automatically generate (o
 
 When using qrs as a library, pass a `dict` with any of the following keys to a `Ruleset` to create a new instance. Here are all the currently supported settings:
 
-| Setting | Default | Description |
-| :-: | :-: | :-- |
-| `debug` 🐛 | `false` | Prints the program's inner workings whilst calculating. Note that many consecutive print statements may negatively affect performance on certain devices or IDEs. |
-| `doubles` 🔀 | `false` | Shows longer words that tie for score (like the `MOWED` / `LETDOWN` example above). |
-| `exclude` ⛔ | `[]` | List of words that the program will never output. |
-| `game` 🎮 | `"quarrel"` | Determines the letter scoring system used for calculating points. The value here is passed into `build_letter_scores()`, and defaults back if invalid. |
-| `include` ✔️ | `[]` | List of additional words for the wordlist. |
-| `lower` 💻 | `false` | Displays output in lowercase letters. The default setting displays capital letters to mimic the style of word games like *Scrabble* and *Quarrel*, however some people may find lowercase output more readable. |
-| `max` 🔼 | longest length in wordlist | Determines the maximum word length the program will calculate for. |
-| `min` 🔽 | `2` | Determines the minimum word length the program will calculate for. |
-| `noscores` 💯 | `false` | Determines whether point values for words are considered, in which case only the highest-scoring words are displayed. If you don't care about scoring, turn this on to see all words. |
-| `repeats` 🔁 | `false` | Determines whether letters can be used more than once. Change this according to your word game's rules; for example, *Scrabble* tiles can only be used once in a word, whereas *New York Times*'s *Spelling Bee* allows the reuse of letters. |
+| | Setting | Shortcut | Default | Description |
+| :-: | :-: | :-: | :-: | :-- |
+| 🐛 | `debug` | `-d` | `false` | Prints the program's inner workings whilst calculating. Note that many consecutive print statements may negatively affect performance on certain devices or IDEs. |
+| 🔀 | `doubles` | `-b` | `false` | Shows longer words that tie for score (like the `MOWED` / `LETDOWN` example above). |
+| ⛔ | `exclude` | `-e` | `[]` | List of words that the program will never output. |
+| 🎮 | `game` | `-g` | `"quarrel"` | Determines the letter scoring system used for calculating points. The value here is passed into `build_letter_scores()`, and defaults back if invalid. |
+| ✔️ | `include` | `-i` | `[]` | List of additional words for the wordlist. |
+| 💻 | `lower` | `-l` | `false` | Displays output in lowercase letters. The default setting displays capital letters to mimic the style of word games like *Scrabble* and *Quarrel*, however some people may find lowercase output more readable. |
+| 🔼 | `max` | `-m` | longest length in wordlist | Determines the maximum word length the program will calculate for. |
+| 🔽 | `min` | `-n` | `2` | Determines the minimum word length the program will calculate for. |
+| 💯 | `noscores` | `-s` | `false` | Determines whether point values for words are considered, in which case only the highest-scoring words are displayed. If you don't care about scoring, turn this on to see all words. |
+| 🔁 | `repeats` | `-r` | `false` | Determines whether letters can be used more than once. Change this according to your word game's rules; for example, *Scrabble* tiles can only be used once in a word, whereas *New York Times Spelling Bee* allows the reuse of letters. |
 
 When running directly:
 
 - To change your settings, do one of the following:
-  - Open `qrs.json` in a text editor and change any values. Make sure to save the file once you're done.
+  - Open `qrs.json` in a text editor and change any values. Make sure to save the file.
   - Pass the setting as a command argument like this: `--setting value`
     - If applicable, this will automatically update the settings file.
 
 ```sh
-$ qrs --lower --max 8 --debug
+$ qrs -l -m 8 -d
+  # is the same as:
+# qrs --lower --max 8 --debug
 
-  # debug info displayed here
+  # debug info displayed here (because of --debug flag)
 
 qrs: _
 ```
