@@ -1,17 +1,15 @@
 <!-- omit from toc -->
 # qrs
 
-tool for *Quarrel* (and other word games)
-
 ![version](https://img.shields.io/pypi/v/qrs)
 ![status](https://img.shields.io/github/actions/workflow/status/silvncr/qrs/python-publish.yml)
 ![downloads](https://img.shields.io/pypi/dm/qrs)
 
 ## Summary
 
-Provides word game-related tools that can be configured with custom settings, letter scores, and wordlists.
+qrs (kyu-arr-ess) is a tool for *Quarrel* and other word games. It provides word game-related tools that can be configured with custom settings, letter scores, and wordlists. qrs can solve anagrams and find the best words to play based on your letters.
 
-- :snake: Supports Python 3.8 and above. Tested on Windows 10.
+- :snake: Supports Python 3.8 and above. Platform-non-constrained.
 - :star: Show your support by leaving a star!
 
 ## Contents
@@ -31,30 +29,74 @@ Install the qrs library to use its functionality in your projects.
 python -m pip install --upgrade qrs
 ```
 
+Here's an example of using the library in the kernel.
+
 ```py
+>>> import json
 >>> from qrs import Ruleset
->>> q = Ruleset({'max': 8})
->>> print(q.solve_str('wetodlnm'))
-
-        --- query: delmnotw (8 letters) ---
-
-        8 letters - 18 points
-         MELTDOWN
-
-        5 letters - 14 points
-         MOWED
-
-        4 letters - 12 points
-         MEWL
-
-        3 letters - 10 points
-         MEW, MOW, WEM
-
-        2 letters - 6 points
-         EW, OW, WE, WO
-
+>>>
+>>> rs = Ruleset(max=8)  # load 2-letter to 8-letter words
+>>> query = 'wetodlnm'  # query to solve
+>>>
+>>> solved = rs.solve_query(query)  # solve the query
+>>>
+>>> if solved.anagram_found:  # check if any anagrams were found; prevents IndexError on next line
+...     print(solved.scores[len(query)].words)  # print anagrams as set[str]
+{'MELTDOWN'}
+>>> print(json.dumps(solved.to_dict(), indent=4))  # full output
+{
+    "query": "delmnotw",
+    "anagram_found": true,
+    "scores": {
+        "8": {
+            "score": 18,
+            "words": [
+                "MELTDOWN"
+            ]
+        },
+        "5": {
+            "score": 14,
+            "words": [
+                "MOWED"
+            ]
+        },
+        "4": {
+            "score": 12,
+            "words": [
+                "MEWL"
+            ]
+        },
+        "3": {
+            "score": 10,
+            "words": [
+                "MEW",
+                "MOW",
+                "WEM"
+            ]
+        },
+        "2": {
+            "score": 6,
+            "words": [
+                "OW",
+                "WE",
+                "EW",
+                "WO"
+            ]
+        }
+    }
+}
 >>> _
 ```
+
+> [!IMPORTANT]
+> `json.dumps()` converts `int` keys to `str`. You should read `"8": {...}` as `8: {...}`, etc.
+<!---->
+> [!NOTE]
+> The API has changed in version `2.x`. Most code written for `1.x` will not work with `2.x`.
+>
+> You don't have to update your settings file.
+>
+> Version `1.x` is still available on PyPI as `qrs==1.*`.
 
 ## Direct execution
 
@@ -72,7 +114,7 @@ Enter your letters and wait for the program to calculate the best words. Choose 
 
 Here's an example using the default program settings. Our situation is the following:
 
-- We're playing *Quarrel*, and thus, we get eight letters.
+- We're playing *Quarrel*, so we get eight letters.
 - Our letters are `wetodlnm`.
 - We have seven spaces to use.
 
@@ -86,7 +128,8 @@ $ qrs --max 8
 qrs: _
 ```
 
-> Note: this has the same effect as creating a `qrs.json` file, then running the command from the same directory:
+> [!TIP]
+> You could instead create a `qrs.json` file, then run the command from the same directory:
 >
 > ```jsonc
 > // qrs.json
@@ -125,7 +168,8 @@ qrs: _
 
 This output tells us that the anagram is `MELTDOWN`, but we can't make that word because we can only use seven letters. In this case, our best word is `MOWED` (14 points). Based on this output, we also know that our opponent cannot score higher than us without all eight spaces.
 
-> Note: a word like `LETDOWN` scores the same number of points as `MOWED`, but isn't recognised as a "best word" in this case. This is because when words are tied for points, the program will choose the word/s with the fewest letters.
+> [!NOTE]
+> A word like `LETDOWN` scores the same number of points as `MOWED`, but isn't recognised as a "best word" in this case. This is because when words are tied for points, the program will choose the word/s with the fewest letters.
 >
 > The fewer letters your word has, the faster you can write it into your game. This is especially important in *Quarrel*, as the tiebreaker for equal points is input speed.
 >
@@ -139,16 +183,19 @@ When using qrs as a library, pass a `dict` with any of the following keys to a `
 
 | | Setting | Shortcut | Default | Description |
 | :-: | :-: | :-: | :-: | :-- |
-| 🐛 | `debug` | `-d` | `false` | Prints the program's inner workings whilst calculating. Note that many consecutive print statements may negatively affect performance on certain devices or IDEs. |
-| 🔀 | `doubles` | `-b` | `false` | Shows longer words that tie for score (like the `MOWED` / `LETDOWN` example above). |
-| ⛔ | `exclude` | `-e` | `[]` | List of words that the program will never output. |
-| 🎮 | `game` | `-g` | `"quarrel"` | Determines the letter scoring system used for calculating points. The value here is passed into `build_letter_scores()`, and defaults back if invalid. |
-| ✔️ | `include` | `-i` | `[]` | List of additional words for the wordlist. |
-| 💻 | `lower` | `-l` | `false` | Displays output in lowercase letters. The default setting displays capital letters to mimic the style of word games like *Scrabble* and *Quarrel*, however some people may find lowercase output more readable. |
-| 🔼 | `max` | `-m` | longest length in wordlist | Determines the maximum word length the program will calculate for. |
-| 🔽 | `min` | `-n` | `2` | Determines the minimum word length the program will calculate for. |
-| 💯 | `noscores` | `-s` | `false` | Determines whether point values for words are considered, in which case only the highest-scoring words are displayed. If you don't care about scoring, turn this on to see all words. |
-| 🔁 | `repeats` | `-r` | `false` | Determines whether letters can be used more than once. Change this according to your word game's rules; for example, *Scrabble* tiles can only be used once in a word, whereas *New York Times Spelling Bee* allows the reuse of letters. |
+| :bug: | `debug` | `-d` | `false` | Prints the program's inner workings while calculating. Note that many consecutive print statements may negatively affect performance on certain devices or IDEs. |
+| :twisted_rightwards_arrows: | `doubles` | `-b` | `false` | Shows longer words that tie for score (like the `MOWED` / `LETDOWN` example above). |
+| :no_entry: | `exclude` | `-e` | `[]` | List of words that the program will never output. |
+| :video_game: | `game` | `-g` | `"quarrel"` | Determines the letter scoring system used for calculating points. The value here is passed into `build_letter_scores()`, and defaults back if invalid. |
+| :heavy_check_mark: | `include` | `-i` | `[]` | List of additional words for the wordlist. |
+| :computer: | `lower` | `-l` | `false` | Displays output in lowercase letters. The default setting displays uppercase letters (in the style of word games like *Quarrel* and *Scrabble*), however some people may find lowercase output more readable. Note that this only affects output; all internal operations are performed in lowercase (wordlist and query storage, etc). |
+| :arrow_up_small: | `max` | `-m` | `28` **\*** | Determines the maximum word length the program will calculate for. |
+| :arrow_down_small: | `min` | `-n` | `2` | Determines the minimum word length the program will calculate for. |
+| :100: | `noscores` | `-s` | `false` | Displays all words, not just those with the highest scores. This will sort by word length. |
+| :repeat: | `repeats` | `-r` | `false` | Determines whether letters can be used more than once. Change this according to your word game's rules; for example, *Scrabble* tiles can only be used once in a word, whereas *New York Times Spelling Bee* allows the reuse of letters. |
+
+> [!NOTE]
+> **\*** The `max` parameter's default value automatically adjusts to the length of the longest word(s) in the wordlist. For the default wordlist, this is 28. If you use a custom wordlist, this setting will default to the length of the longest word(s) in that list.
 
 When running directly:
 
@@ -158,9 +205,7 @@ When running directly:
     - If applicable, this will automatically update the settings file.
 
 ```sh
-$ qrs -l -m 8 -d
-  # is the same as:
-# qrs --lower --max 8 --debug
+$ qrs --lower --max 8 --debug
 
   # debug info displayed here (because of --debug flag)
 
@@ -169,3 +214,24 @@ qrs: _
 
 - If `qrs.json` is not in your folder, try running the program and letting it fully load. It should then create the file.
 - After saving `qrs.json`, the program will not change if it's already running. Close the program and rerun it to use the changed settings.
+
+> [!TIP]
+> Every command line argument has a corresponding shortcut. For example, `--lower` can be shortened to `-l`. You can use these shortcuts to save time when entering settings. Here is the previous example with shortcuts:
+>
+> ```sh
+> $ qrs -l -m 8 -d
+> ```
+>
+> If you're unsure about a setting, you can check the program's help message by running `qrs --help`.
+>
+> ```sh
+> $ qrs --help
+> ```
+>
+> Shortcuts and help messages are only available when running the program from the command line. When using the library, you must pass the full setting name as a key in a `dict`.
+
+---
+
+© 2023-2024 silvncr
+
+[MIT License](https://github.com/silvncr/qrs/blob/main/LICENSE)
