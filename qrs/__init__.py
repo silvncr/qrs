@@ -8,7 +8,7 @@ from __future__ import annotations
 __author__ = 'silvncr'
 __license__ = 'MIT'
 __module__ = 'qrs'
-__version__ = '2.0.0'
+__version__ = '2.0.1'
 
 
 from contextlib import suppress

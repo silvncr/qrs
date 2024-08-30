@@ -6,7 +6,7 @@ from setuptools import setup
 setup(
 	name=__module__,
 	version=__version__,
-	description=__doc__ or '',
+	description=(__doc__ or '').replace('\n', ' '),
 	long_description=Path('README.md').read_text(),
 	long_description_content_type='text/markdown',
 	url=f'https://github.com/{__author__}/{__module__}',
