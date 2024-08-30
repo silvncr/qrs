@@ -5,21 +5,22 @@
 ![status](https://img.shields.io/github/actions/workflow/status/silvncr/qrs/python-publish.yml)
 ![downloads](https://img.shields.io/pypi/dm/qrs)
 
-## Summary
-
 qrs (kyu-arr-ess) is a tool for *Quarrel* and other word games. It provides word game-related tools that can be configured with custom settings, letter scores, and wordlists. qrs can solve anagrams and find the best words to play based on your letters.
 
 - :snake: Supports Python 3.8 and above. Platform-non-constrained.
 - :star: Show your support by leaving a star!
 
+---
+
 ## Contents
 
-- [Summary](#summary)
 - [Contents](#contents)
 - [The qrs library](#the-qrs-library)
 - [Direct execution](#direct-execution)
 - [Example case](#example-case)
 - [Settings](#settings)
+
+---
 
 ## The qrs library
 
@@ -29,7 +30,14 @@ Install the qrs library to use its functionality in your projects.
 python -m pip install --upgrade qrs
 ```
 
-Here's an example of using the library in the kernel.
+Here's an example of using the library in the kernel:
+
+<details><summary>Click to expand</summary>
+
+---
+
+> [!IMPORTANT]
+> `json.dumps()` converts `int` keys to `str`. You should read `"8": {...}` as `8: {...}`, etc.
 
 ```py
 >>> import json
@@ -88,15 +96,18 @@ Here's an example of using the library in the kernel.
 >>> _
 ```
 
-> [!IMPORTANT]
-> `json.dumps()` converts `int` keys to `str`. You should read `"8": {...}` as `8: {...}`, etc.
-<!---->
+---
+
+</details>
+
 > [!NOTE]
 > The API has changed in version `2.x`. Most code written for `1.x` will not work with `2.x`.
 >
 > You don't have to update your settings file.
 >
 > Version `1.x` is still available on PyPI as `qrs==1.*`.
+
+---
 
 ## Direct execution
 
@@ -109,6 +120,8 @@ qrs: _
 Upon being called from the command line, it will display an input screen.
 
 Enter your letters and wait for the program to calculate the best words. Choose one from the list that corresponds with the number of letters you have available, or the next longest. See the example below to find out why you might not need to use all of your spaces.
+
+---
 
 ## Example case
 
@@ -175,11 +188,13 @@ This output tells us that the anagram is `MELTDOWN`, but we can't make that word
 >
 > You can choose to display longer, tied words by enabling the `--doubles` setting.
 
+---
+
 ## Settings
 
 Upon being run from the command line, the program will automatically generate (or look for) a `qrs.json` file in the directory from which the command is run. This file contains the program's settings, which can be changed to suit your needs.
 
-When using qrs as a library, pass a `dict` with any of the following keys to a `Ruleset` to create a new instance. Here are all the currently supported settings:
+When using qrs as a library, pass any of the following args to a `Ruleset` to create a new instance. Here are all the currently supported settings:
 
 | | Setting | Shortcut | Default | Description |
 | :-: | :-: | :-: | :-: | :-- |
@@ -228,7 +243,7 @@ qrs: _
 > $ qrs --help
 > ```
 >
-> Shortcuts and help messages are only available when running the program from the command line. When using the library, you must pass the full setting name as a key in a `dict`.
+> Shortcuts and help messages are only available when running the program from the command line.
 
 ---
 
