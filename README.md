@@ -106,7 +106,7 @@ Here's an example of using qrs in the REPL:
 </details>
 
 > [!NOTE]
-> The API has changed in version `2.x`. Most code written for `1.x` will not work with `2.x`.
+> The API has changed in version `2.x`/`3.x`. Most code written for `1.x` will not work with `2.x`/`3.x`.
 >
 > You don't have to update your settings file.
 
